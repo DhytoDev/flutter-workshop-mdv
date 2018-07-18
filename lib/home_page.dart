@@ -35,7 +35,7 @@ class _HomePageState extends State<HomePage> {
 
   _gridView() => Container(
         child: GridView.count(
-          padding: const EdgeInsets.all(8.0),
+          padding: const EdgeInsets.all(10.0),
           crossAxisCount: 2,
           childAspectRatio: 2 / 3.5,
           mainAxisSpacing: 10.0,
@@ -51,8 +51,9 @@ class _HomePageState extends State<HomePage> {
 
   _createTile(Movie movie) => Material(
         shadowColor: Colors.orange,
+        elevation: 5.0,
         child: Card(
-          elevation: 10.0,
+          elevation: 0.0,
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
@@ -62,7 +63,9 @@ class _HomePageState extends State<HomePage> {
                   child: Center(
                     child: Text(
                       movie.title,
-                      style: TextStyle(fontFamily: 'Merriweather'),
+                      style: TextStyle(
+                          fontFamily: 'Merriweather',
+                          fontWeight: FontWeight.bold),
                     ),
                   ),
                 ),
