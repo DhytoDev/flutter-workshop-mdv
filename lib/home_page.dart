@@ -12,7 +12,7 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  bool _isLoading = false;
+  bool _isLoading = true;
   List<Movie> _movies = [];
 
   Future<List<Movie>> getMoviesFromApi() async {
@@ -32,12 +32,6 @@ class _HomePageState extends State<HomePage> {
     return movieList;
   }
 
-  void addMovies(item) {
-    setState(() {
-      Movie.fromJson(item);
-    });
-  }
-
   @override
   void initState() {
     super.initState();
@@ -45,6 +39,7 @@ class _HomePageState extends State<HomePage> {
     getMoviesFromApi().then((movies) {
       setState(() {
         _movies = movies;
+        _isLoading = false;
         _movies.forEach((movie) => print('title : ${movie.title}'));
       });
     });
@@ -53,14 +48,17 @@ class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     final _gridView = Container(
-      child: GridView.count(
-        padding: const EdgeInsets.all(10.0),
-        crossAxisCount: 2,
-        childAspectRatio: 2 / 3.5,
-        mainAxisSpacing: 10.0,
-        crossAxisSpacing: 10.0,
-        children: _movies.map<Widget>((movie) => _createTile(movie)).toList(),
-      ),
+      child: _isLoading
+          ? Center(child: CircularProgressIndicator())
+          : GridView.count(
+              padding: const EdgeInsets.all(10.0),
+              crossAxisCount: 2,
+              childAspectRatio: 2 / 3.5,
+              mainAxisSpacing: 10.0,
+              crossAxisSpacing: 10.0,
+              children:
+                  _movies.map<Widget>((movie) => _createTile(movie)).toList(),
+            ),
     );
 
     return Scaffold(
