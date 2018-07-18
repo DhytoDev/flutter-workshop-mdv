@@ -1,5 +1,10 @@
+import 'dart:async';
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
+import 'package:flutter_movie_app_mdv/const.dart';
 import 'package:flutter_movie_app_mdv/movie.dart';
+import 'package:http/http.dart' as http;
 
 class HomePage extends StatefulWidget {
   @override
@@ -7,10 +12,48 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  final _isLoading = false;
+  bool _isLoading = false;
+  List<Movie> _movies = [];
+
+  Future<List<Movie>> getMoviesFromApi() async {
+    String url = '$BASE_URL/upcoming?api_key=$API_KEY';
+    final List<Movie> movieList = [];
+
+    http
+        .get(url)
+        .then((response) => response.body)
+        .then(json.decode)
+        .then((map) => map['results'])
+        .then((movies) =>
+            movies.forEach((movie) => movieList.add(Movie.fromJson(movie))));
+
+    return movieList;
+  }
+
+  @override
+  void initState() {
+    super.initState();
+
+    getMoviesFromApi().then((movies) {
+      setState(() {
+        _movies = movies;
+      });
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
+    final _gridView = Container(
+      child: GridView.count(
+        padding: const EdgeInsets.all(10.0),
+        crossAxisCount: 2,
+        childAspectRatio: 2 / 3.5,
+        mainAxisSpacing: 10.0,
+        crossAxisSpacing: 10.0,
+        children: _movies.map((movie) => _createTile(movie)).toList(),
+      ),
+    );
+
     return Scaffold(
       appBar: AppBar(
         title: Text('Top Movie'),
@@ -29,25 +72,9 @@ class _HomePageState extends State<HomePage> {
               onPressed: () {}),
         ],
       ),
-      body: _gridView(),
+      body: _gridView,
     );
   }
-
-  _gridView() => Container(
-        child: GridView.count(
-          padding: const EdgeInsets.all(10.0),
-          crossAxisCount: 2,
-          childAspectRatio: 2 / 3.5,
-          mainAxisSpacing: 10.0,
-          crossAxisSpacing: 10.0,
-          children: <Widget>[
-            _createTile(Movie('Jurrasic World', 'assets/poster_1.jpg')),
-            _createTile(Movie('Ready Player One', 'assets/poster_2.jpg')),
-            _createTile(Movie('Ant Man', 'assets/poster_3.jpg')),
-            _createTile(Movie('Thor', 'assets/poster_4.jpg')),
-          ],
-        ),
-      );
 
   _createTile(Movie movie) => Material(
         shadowColor: Colors.orange,
