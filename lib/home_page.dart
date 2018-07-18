@@ -4,6 +4,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter_movie_app_mdv/const.dart';
 import 'package:flutter_movie_app_mdv/movie.dart';
+import 'package:flutter_movie_app_mdv/movie_detal.dart';
 import 'package:http/http.dart' as http;
 
 class HomePage extends StatefulWidget {
@@ -83,30 +84,40 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
-  _createTile(Movie movie) => Material(
-        shadowColor: Colors.orange,
-        elevation: 5.0,
-        child: Card(
-          elevation: 0.0,
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: <Widget>[
-              Image.network('$POSTER_PATH_URL${movie.posterPath}',
-                  fit: BoxFit.cover),
-              Expanded(
-                child: Container(
-                  child: Center(
-                    child: Text(
-                      movie.title,
-                      style: TextStyle(
-                          fontFamily: 'Merriweather',
-                          fontWeight: FontWeight.bold),
-                      textAlign: TextAlign.center,
+  _createTile(Movie movie) => Hero(
+        tag: movie.title,
+        child: Material(
+          shadowColor: Colors.orange,
+          elevation: 5.0,
+          child: InkWell(
+            onTap: () {
+              var route =
+                  MaterialPageRoute(builder: (context) => DetailMovie(movie));
+              Navigator.of(context).push(route);
+            },
+            child: Card(
+              elevation: 0.0,
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: <Widget>[
+                  Image.network('$POSTER_PATH_URL${movie.posterPath}',
+                      fit: BoxFit.cover),
+                  Expanded(
+                    child: Container(
+                      child: Center(
+                        child: Text(
+                          movie.title,
+                          style: TextStyle(
+                              fontFamily: 'Merriweather',
+                              fontWeight: FontWeight.bold),
+                          textAlign: TextAlign.center,
+                        ),
+                      ),
                     ),
                   ),
-                ),
+                ],
               ),
-            ],
+            ),
           ),
         ),
       );
