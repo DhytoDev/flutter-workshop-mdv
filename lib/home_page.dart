@@ -19,15 +19,23 @@ class _HomePageState extends State<HomePage> {
     String url = '$BASE_URL/upcoming?api_key=$API_KEY';
     final List<Movie> movieList = [];
 
-    http
+    print('url : $url');
+
+    await http
         .get(url)
         .then((response) => response.body)
         .then(json.decode)
-        .then((map) => map['results'])
+        .then((map) => map["results"])
         .then((movies) =>
             movies.forEach((movie) => movieList.add(Movie.fromJson(movie))));
 
     return movieList;
+  }
+
+  void addMovies(item) {
+    setState(() {
+      Movie.fromJson(item);
+    });
   }
 
   @override
@@ -37,6 +45,7 @@ class _HomePageState extends State<HomePage> {
     getMoviesFromApi().then((movies) {
       setState(() {
         _movies = movies;
+        _movies.forEach((movie) => print('title : ${movie.title}'));
       });
     });
   }
@@ -50,7 +59,7 @@ class _HomePageState extends State<HomePage> {
         childAspectRatio: 2 / 3.5,
         mainAxisSpacing: 10.0,
         crossAxisSpacing: 10.0,
-        children: _movies.map((movie) => _createTile(movie)).toList(),
+        children: _movies.map<Widget>((movie) => _createTile(movie)).toList(),
       ),
     );
 
@@ -84,7 +93,8 @@ class _HomePageState extends State<HomePage> {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
-              Image.asset(movie.posterPath, fit: BoxFit.cover),
+              Image.network('$POSTER_PATH_URL${movie.posterPath}',
+                  fit: BoxFit.cover),
               Expanded(
                 child: Container(
                   child: Center(
@@ -93,6 +103,7 @@ class _HomePageState extends State<HomePage> {
                       style: TextStyle(
                           fontFamily: 'Merriweather',
                           fontWeight: FontWeight.bold),
+                      textAlign: TextAlign.center,
                     ),
                   ),
                 ),
